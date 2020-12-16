@@ -3,6 +3,9 @@ This desktop application efficiently copies the <b>entirety</b> of any number of
 
 Once synchronized to a store, this enables you to query approximately 1 million orders per minute.
 
+
+<img alt="tehaksbrid/shop-databaser status" src="https://github.com/tehaksbrid/shop-databaser/blob/main/screenshots/status.PNG" width="auto"/>
+
 <h2>Goals</h2>
 <ol>
 <li>Remake Shopify admin search with orders of magnitude more power, accuracy, and speed</li>
