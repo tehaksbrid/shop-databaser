@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop Databaser Data Console</title>
+    <script>
+        let {ipcRenderer} = require('electron');
+        window.results = [];
+        ipcRenderer.on('console-load-data', (event, data) => {
+            console.log(`Loading data chunk ${data.step} of ${data.max}...`);
+            window.results = window.results.concat(data.chunk);
+            if (data.step === data.max) {
+                console.clear();
+                console.log(`Store: ${data.store.name}`);
+                console.log(`Originating query: ${data.query}`);
+                console.log(`${results.length} results`);
+                console.log(`Manipulate data via global variable "results"`);
+                console.log(results);
+            }
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

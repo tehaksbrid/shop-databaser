@@ -1,0 +1,492 @@
+:root {
+    --bg-color-primary: #303030;
+    --bg-color-secondary: #424242;
+    --bg-color-just-off-secondary: #404040;
+    --element-primary: #fff;
+    --element-secondary: rgba(255, 255, 255, 0.7);
+    --element-disabled: rgba(255, 255, 255, 0.5);
+    --divider-color: rgba(255, 255, 255, 0.12);
+    --element-active: rgba(255, 255, 255, 0.35);
+    --accent-negative: #F38851;
+    --accent-positive: #85BC3A;
+}
+
+a:hover {
+    color: var(--element-active);
+}
+
+a {
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+html {
+    overflow-y: hidden;
+}
+
+body {
+    margin: 0;
+    border: 1px solid black;
+    height: calc(100vh - 2px);
+}
+
+* {
+    background-color: var(--bg-color-primary);
+    color: var(--element-primary);
+    transition: color, background-color 0.2s;
+    font-family: system-ui;
+}
+
+a {
+    cursor: pointer;
+}
+
+.navigation {
+    display:flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: flex-start;
+    border-bottom: 3px solid var(--divider-color);
+}
+
+.navigation .tab {
+    padding: 7px 25px;
+    font-size: 14px;
+    background-color: var(--bg-color-secondary);
+    font-weight: 200;
+    width:60px;
+    text-align: center;
+    border-bottom: 3px solid transparent;
+    color: var(--element-secondary);
+    transition: border-bottom-color 0.2s;
+}
+
+.navigation .tab.active {
+    border-bottom: 3px solid var(--element-active);
+    color: var(--element-primary);
+    cursor: default;
+}
+
+.navigation .tab:hover {
+    background-color: var(--element-active);
+    cursor: pointer;
+}
+
+.navigation .filler {
+    flex: 1;
+    display: flex;
+    -webkit-app-region: drag;
+    align-self: stretch;
+    font-size: 10px;
+    color: #424242;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.navigation .close {
+    text-align: end;
+}
+
+.navigation .close svg:hover {
+    cursor: pointer;
+    background-color: var(--element-primary);
+}
+
+.content {
+    display: none;
+}
+
+.content.active {
+    display: block;
+}
+
+.store-list {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    margin: 40px;
+    text-align: center;
+}
+
+.store {
+    display: flex;
+    width: 50%;
+    margin: 0 auto 12px;
+    font-size: 12px;
+    padding: 10px;
+    border: 2px solid var(--divider-color);
+}
+
+.indicator {
+    background-color: var(--accent-negative);
+    border-radius: 100%;
+    min-width: 8px;
+    min-height: 8px;
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    margin-right: 3px;
+}
+
+.good {
+    background-color: var(--accent-positive);
+}
+
+.store-title {
+    display: flex;
+    align-items: center;
+}
+
+.store > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.store span {
+    color: var(--element-secondary);
+}
+
+.store-left {
+    text-align: start;
+}
+
+.store-right {
+    text-align: end;
+}
+
+.tiles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin: 40px;
+}
+
+.tiles .tile {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    width: 20%;
+    padding: 8px;
+    margin: 25px 0 25px 0;
+}
+
+.tiles .tile div {
+    font-size: 30px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--divider-color);
+}
+
+.tile span {
+    text-transform: uppercase;
+    font-size: 10px;
+    color: var(--element-secondary);
+    font-weight:500;
+}
+
+input {
+    border: none;
+    border-bottom: 1px solid var(--element-secondary);
+    transition: border-bottom-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-bottom-color: var(--element-primary);
+}
+
+textarea {
+    border: none;
+    height: 20px;
+    overflow-y: hidden;
+    border-bottom: 1px solid var(--element-secondary);
+    transition: border-bottom-color 0.3s;
+}
+
+textarea:focus {
+    outline: none;
+    border-bottom-color: var(--element-primary);
+}
+
+button[disabled] {
+    color: var(--element-disabled);
+    background-color: var(--bg-color-primary);
+    cursor: default;
+}
+
+button {
+    border: none;
+    background-color: var(--bg-color-secondary);
+    padding:4px 20px;
+    cursor: pointer;
+    transition: color 0.1s, top 0.3s, background-color 0.3s;
+}
+
+button:active {
+    color: var(--element-active);
+    top: 1px;
+    position: relative;
+}
+
+button:focus {
+    outline: none;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    -webkit-app-region: drag;
+    height: calc(100vh - 2px);
+}
+
+.modal-body > * {
+    font-size: 12px;
+    color: var(--element-primary);
+    width: 75%;
+}
+
+.modal-body > .modal-text {
+    font-size: 14px;
+    padding-bottom: 15px;
+}
+
+.modal-body > .modal-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    -webkit-app-region: no-drag;
+}
+
+a {
+    -webkit-app-region: no-drag;
+}
+
+.modal-fields {
+    display: flex;
+    flex-direction: column;
+    height: 60vh;
+    justify-content: space-around;
+    border-radius: 2px;
+}
+
+.modal-fields input {
+    -webkit-app-region: no-drag;
+}
+
+.form-status-message {
+    text-align: center;
+    color: var(--element-secondary);
+    visibility: hidden;
+    transition: visibility 0.3s;
+}
+
+.queries > div {
+    height: 95vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-around;
+}
+
+.query-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.query-container > select {
+    font-size: 12px;
+    margin-right: 20px;
+    min-width: 100px;
+    padding: 4px;
+    border: none;
+    border-bottom: 1px solid var(--element-secondary);
+}
+
+.query-container > select:focus {
+    outline: none;
+}
+
+.query-container > input, .query-container > textarea {
+    width: 60%;
+    font-size: 14px;
+}
+
+.query-options {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.query-options svg {
+    height: 24px;
+    fill: var(--element-active);
+    cursor: pointer;
+    transition: fill 0.2s;
+}
+
+.query-options span:hover svg {
+    fill: var(--element-primary);
+}
+
+.send-to-console, .send-to-file {
+    position: absolute;
+    background-color: transparent;
+}
+
+.send-to-console {
+    right: 10px;
+    bottom: -16px;
+}
+
+.send-to-file {
+    right: 40px;
+    bottom: -15px;
+}
+
+.query-status {
+    flex: 1;
+    font-size: 12px;
+    color: var(--element-disabled);
+    text-align: center;
+}
+
+.query-syntax-error {
+    font-family: monospace;
+    color: var(--accent-negative);
+}
+
+.query-results {
+    border-top: 1px solid var(--divider-color);
+    flex: 0.8;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    font-family: monospace;
+    color: var(--element-secondary);
+}
+
+.query-container > input:focus ~ .query-submit {
+    border-bottom-color: var(--element-primary);
+    color: var(--element-active);
+}
+
+.query-container > textarea:focus ~ .query-submit {
+    border-bottom-color: var(--element-primary);
+    color: var(--element-active);
+}
+
+.query-submit {
+    color: var(--element-primary);
+    height: 24px;
+    width: 24px;
+    border-bottom: 1px solid var(--element-secondary);
+    transition: border-bottom-color 0.3s;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.query-submit svg {
+    height: 18px;
+}
+
+::-webkit-scrollbar {
+    width: 2px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--element-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--element-primary);
+}
+
+.query-results {
+    overflow-x: scroll;
+    overflow-y: scroll;
+    display: block;
+    /*padding: 15px 5px 5px 5px;*/
+}
+
+.result-line {
+    width: 100%;
+    font-size: 12px;
+    border-bottom: 1px dotted var(--divider-color);
+    display: flex;
+    transition: background-color 0.35s;
+}
+
+.result-line:hover {
+    background-color: var(--bg-color-secondary);
+}
+
+.result-line * {
+    background-color: transparent;
+}
+
+.result-line > div {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    flex-basis: 33%;
+    overflow: hidden;
+}
+
+.result-line > div:nth-of-type(2) {
+    flex-basis: 66%;
+}
+
+.result-line > div:nth-of-type(3) {
+    text-align: center;
+}
+
+.result-line span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.result-identifier {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--accent-negative)
+}
+
+.settings > div {
+    height: 25vh;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.settings label {
+    font-size: 12px;
+    color: var(--element-secondary);
+}
+
+.settings input[type=number] {
+    max-width: 40px;
+    text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

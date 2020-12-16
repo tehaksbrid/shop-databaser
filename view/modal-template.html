@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Electron Modal</title>
+    <script>
+        let {ipcRenderer} = require('electron');
+        ipcRenderer.on('modal-load-data', (event, data) => {
+            window.data = data;
+        });
+        ipcRenderer.on('modal-load-contents', (event, file) => {
+            let fs = require('fs');
+            let contents = fs.readFileSync(file, {encoding: 'utf8'});
+            document.querySelector('body').innerHTML = contents;
+            let embeddedScripts = Array.from(document.querySelectorAll('body script'));
+            let scriptsToCreate = embeddedScripts.map(script => {
+                let newScript = document.createElement('script');
+                newScript.innerHTML = script.innerHTML;
+                script.remove();
+                return newScript;
+            });
+            document.querySelector('body').innerHTML = eval('`' + document.querySelector('body').innerHTML + '`');
+            scriptsToCreate.forEach(script => document.head.appendChild(script));
+        });
+        window.exit = (returnValue) => {
+            ipcRenderer.invoke('modal-close-window', returnValue);
+        };
+    </script>
+</head>
+<body>
+
+</body>
+</html>

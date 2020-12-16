@@ -1,0 +1,20 @@
+{
+  "name": "shop_databaser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^10.1.5"
+  },
+  "dependencies": {
+    "axios": "^0.18.1",
+    "retry-axios": "^2.3.0",
+    "uuid": "^8.3.1"
+  }
+}

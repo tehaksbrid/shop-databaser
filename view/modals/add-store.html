@@ -1,0 +1,71 @@
+<script>
+
+    document.querySelector('form').addEventListener('input', () => {
+        document.querySelector('.form-status-message').style.visibility = 'hidden';
+        let form = Object.fromEntries(new FormData(document.querySelector('form')));
+        if (Object.values(form).some(v => !v)) document.querySelector('.modal-submit').setAttribute('disabled', 'true');
+        else document.querySelector('.modal-submit').removeAttribute('disabled');
+    });
+
+    let testConnection = async (store) => {
+        let message = document.querySelector('.form-status-message');
+        let axios = require('axios');
+        let path = `https://${store.key}:${store.password}@${store.url}/admin/api/2020-10`;
+        try {
+            message.innerText = "Testing permissions...";
+            await axios(`${path}/shop.json`);
+            message.innerText = "Testing order permissions...";
+            await axios(`${path}/orders.json?limit=1`);
+            message.innerText = "Testing customer permissions...";
+            await axios(`${path}/customers.json?limit=1`);
+            message.innerText = "Testing product permissions...";
+            await axios(`${path}/products.json?limit=1`);
+            message.innerText = "Testing inventory permissions...";
+            await axios(`${path}/inventory_items.json?ids=12345`);
+            message.innerText = "Testing price rule permissions...";
+            return true;
+        } catch (err) {
+            message.innerText += `Failed: ${err.message}`;
+            return false;
+        }
+    };
+
+    let submit = () => {
+        document.querySelector('.modal-submit').setAttribute('disabled', 'true');
+        let message = document.querySelector('.form-status-message');
+        message.innerText = "Checking connection...";
+        message.style.visibility = 'visible';
+        let store = Object.fromEntries(new FormData(document.querySelector('form')));
+
+        store.url = store.url.replace('https://', '');
+        try {
+            store.url = new URL(`https://${store.url}`).hostname;
+        } catch (err) {
+            message.innerText = "Store URL doesn't look right...";
+            return;
+        }
+        testConnection(store)
+            .then(pass => {
+                if (pass) {
+                    message.innerText = "Success. Finishing registration...";
+                    exit(store);
+                } else document.querySelector('.modal-submit').removeAttribute('disabled');
+            })
+    };
+
+</script>
+<link rel="stylesheet" href="view.css"/>
+<div class="modal-body">
+    <div class="modal-text"><a target="_blank" href="https://github.com/tehaksbrid/shop-databaser#setup">View the permissions setup guide here</a></div>
+    <form class="modal-fields">
+        <input required name="name" placeholder="Nickname"/>
+        <input required name="url" placeholder="my-store.myshopify.com"/>
+        <input required name="key" placeholder="API key"/>
+        <input required name="password" placeholder="API password"/>
+    </form>
+    <div class="form-status-message">Checking connection...</div>
+    <div class="modal-actions">
+        <button class="modal-submit" onclick="submit()" disabled="true">Connect</button>
+        <button onclick="window.exit(false)">Cancel</button>
+    </div>
+</div>

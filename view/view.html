@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop Databaser</title>
+    <link rel="stylesheet" href="view.css"/>
+    <script src="view.js"></script>
+</head>
+<body>
+<div class="navigation">
+    <div class="tab status active" onclick="show('status')">Status</div>
+    <div class="tab stores" onclick="show('stores')">Stores</div>
+    <div class="tab queries" onclick="show('queries')">Queries</div>
+    <div class="tab settings" onclick="show('settings')">Settings</div>
+    <div class="filler">shop databaser β1</div>
+    <div class="close">
+        <svg onclick="window.close()" xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 0 24 24" width="28">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path fill="currentColor"
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+    </div>
+</div>
+<div class="content-window">
+    <div class="content status active">
+        <div style="text-align:center; font-size: 12px; color:var(--element-secondary); margin-top: 30px;">This is a
+            summary of the local database
+        </div>
+        <div class="tiles">
+            <div class="tile">
+                <div>-</div>
+                <span>orders</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>fulfillments</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>customers</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>products</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>discounts</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>inventory items</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>files</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>total objects</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>disk usage (MB)</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>sync state</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>% token usage</span>
+            </div>
+            <div class="tile">
+                <div>-</div>
+                <span>stores</span>
+            </div>
+        </div>
+    </div>
+    <div class="content stores">
+        <div class="store-list">
+            <h3>Stores loaded</h3>
+            <div></div>
+        </div>
+    </div>
+    <div class="content queries">
+        <div>
+            <div style="display: flex; align-items: center; flex:0.2;">
+                <div class="query-container">
+                    <select>
+                    </select>
+                    <textarea class="query" data-qi="0" spellcheck="false" placeholder="Query"></textarea>
+                    <span title="Submit query (Enter)" class="query-submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                                                                 viewBox="0 0 24 24"><path
+                            d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+                </div>
+            </div>
+            <div class="query-options">
+                <div class="query-status">&nbsp;</div>
+                <span title="Send results to console" class="send-to-console"><svg fill="currentColor"
+                                                                                   xmlns="http://www.w3.org/2000/svg"
+                                                                                   viewBox="0 0 32 32" x="0px" y="0px">
+                    <g data-name="Layer 19">
+                        <path d="M9,21a1,1,0,0,1-.8-.39,1,1,0,0,1,.19-1.41L12.6,16,8.39,12.8a1,1,0,1,1,1.22-1.6l5.25,4a1,1,0,0,1,0,1.6l-5.25,4A1.08,1.08,0,0,1,9,21Zm15-1a1,1,0,0,0-1-1H16.88a1,1,0,1,0,0,2H23A1,1,0,0,0,24,20Zm6,2.69V9.31A3.32,3.32,0,0,0,26.69,6H5.31A3.32,3.32,0,0,0,2,9.31V22.69A3.32,3.32,0,0,0,5.31,26H26.69A3.32,3.32,0,0,0,30,22.69ZM26.69,8A1.31,1.31,0,0,1,28,9.31V22.69A1.31,1.31,0,0,1,26.69,24H5.31A1.31,1.31,0,0,1,4,22.69V9.31A1.31,1.31,0,0,1,5.31,8Z"></path>
+                    </g>
+                </svg></span>
+                <span title="Send results to file" class="send-to-file"><svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                     version="1.1" x="0px" y="0px" viewBox="0 0 66 66" style="enable-background:new 0 0 66 66;"
+                     xml:space="preserve"><g><path d="M39.8,6.5c-1-1-2.4-1.5-3.8-1.5H21c-5.2,0-9.5,4.3-9.5,9.5v37c0,5.2,4.3,9.5,9.5,9.5h24c5.2,0,9.5-4.3,9.5-9.5V22.7   c0-1.5-0.6-3-1.7-4L39.8,6.5z M51.5,51.5c0,3.6-2.9,6.5-6.5,6.5H21c-3.6,0-6.5-2.9-6.5-6.5v-37c0-3.6,2.9-6.5,6.5-6.5h15   c0,0,0.1,0,0.1,0v9c0,3,2.5,5.5,5.5,5.5h9.9c0,0.1,0,0.2,0,0.2V51.5z"></path><path
+                        d="M19.9,40.1c-0.7,0-1.2,0.6-1.2,1.2c0,0.7,0.6,1.2,1.2,1.2c0.7,0,1.2-0.6,1.2-1.2C21.1,40.6,20.6,40.1,19.9,40.1z"></path><path
+                        d="M22.9,42.3c0,0.7-0.3,1-0.8,1c-0.4,0-0.6-0.1-0.8-0.3l-0.5,1.5c0.5,0.3,0.8,0.4,1.7,0.4c1.7,0,2.4-1.1,2.4-2.6v-6.2h-2   V42.3z"></path><path
+                        d="M23.9,33.2c-0.6,0-1.1,0.5-1.1,1.1c0,0.6,0.5,1.2,1.1,1.2s1.2-0.5,1.2-1.2C25.1,33.7,24.6,33.2,23.9,33.2z"></path><path
+                        d="M28,37.9c0-0.2,0.3-0.4,0.8-0.4c0.8,0,1.5,0.3,1.8,0.7l0.8-1.4c-0.7-0.5-1.6-0.8-2.6-0.8c-1.7,0-2.7,1-2.7,2.1   c0,2.5,3.7,1.7,3.7,2.5c0,0.3-0.2,0.4-0.8,0.4c-0.7,0-1.7-0.4-2.2-0.8l-0.8,1.4c0.7,0.6,1.8,1,3,1c1.8,0,2.8-0.9,2.8-2.1   C31.6,37.9,28,38.6,28,37.9z"></path><path
+                        d="M35.7,35.9c-2.1,0-3.4,1.5-3.4,3.3c0,1.8,1.3,3.3,3.4,3.3c2.2,0,3.4-1.5,3.4-3.3C39.1,37.5,37.8,35.9,35.7,35.9z    M35.7,40.8c-0.9,0-1.4-0.7-1.4-1.5c0-0.8,0.5-1.5,1.4-1.5c0.9,0,1.4,0.7,1.4,1.5C37,40.1,36.5,40.8,35.7,40.8z"></path><path
+                        d="M44.3,35.9c-1.1,0-1.8,0.5-2.2,0.9v-0.8h-2v6.3h2v-4.1c0.2-0.3,0.6-0.6,1.2-0.6c0.6,0,1,0.3,1,1v3.6h2v-4.4   C46.4,36.8,45.8,35.9,44.3,35.9z"></path></g></svg></span>
+            </div>
+            <div class="query-results">
+                <div class="result-line"></div>
+            </div>
+        </div>
+    </div>
+    <div class="content settings">
+        <div>
+            <label>
+                <input type="checkbox" name="automatic_result_view"/>
+                Automatically display results in devtools
+            </label>
+            <label>
+                <input type="checkbox" name="use_caching"/>
+                Cache query data
+            </label>
+            <label>
+                <input type="number" name="cache_ttl"/>
+                Query cache lifetime in minutes
+            </label>
+            <label>
+                <input type="number" name="sync_frequency"/>
+                Automatic re-sync frequency in days
+            </label>
+        </div>
+    </div>
+</div>
+</body>
+</html>
