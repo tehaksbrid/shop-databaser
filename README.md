@@ -1,7 +1,9 @@
 # Shop Databaser (SD)
+Your store, your data; whenever you need it. A data science tool for Shopify stores.
+
 This desktop application efficiently copies the <b>entirety</b> of any number of connected Shopify stores. The results are stored in a custom database in a highly compressed format. Data access is provided via queries, JSON exports, or direct terminal access.
 
-Once synchronized to a store, this enables you to query approximately 1 million orders per minute.
+Cold queries can return 1 million orders per minute.
 
 
 <img alt="tehaksbrid/shop-databaser status" src="https://github.com/tehaksbrid/shop-databaser/blob/main/screenshots/status.PNG" width="auto"/>
@@ -143,6 +145,69 @@ products : variants : inventory [ harmonized_system_code = null ]
 customers : orders : discount_codes [ code = ABC ]
 ```
 
+<h2>Example analyses</h2>
+<h5>Plottable delivery times of all fulfillments</h5>
+
+```
+fulfillments : events [ status = delivered ]
+
+(Send results to console)
+
+results.map(f => (new Date(f.events.find(e => e.status === "DELIVERED").happenedAt) - new Date(f.created_at)) / 8.64e7);
+```
+
+<h5>Units sold per day of a specific SKU</h5>
+
+```
+orders : line_items [ sku = ABC ]
+
+(Send results to console)
+
+results.map(o => {
+  return {
+    quantity: o.line_items.find(l => l.sku === "ABC").quantity
+    date: new Date(o.created_at).toLocaleDateString('en-US')
+  }
+}).reduce((entries, o) => {
+  entries[o.date] = entries[o.date] ? entries[o.date] + o.quantity : o.quantity;
+  return entries;
+}, {});
+```
+
+<h5>AOV time series with full autocorrelation</h5>
+
+```
+orders [ subtotal_price > 0 ]
+
+(Send results to console)
+
+let aovSet = results.map(o => {
+  return {
+    revenue: +o.subtotal_price,
+    date: new Date(o.created_at).toLocaleDateString('en-US')
+  }
+});
+
+let aovPerDay = aovSet.reduce((entries, o) => {
+  entries[o.date] = entries[o.date] ? {...o, count: entries[o.date].count + 1, revenue: entries[o.date].revenue + o.revenue} : {...o, count: 1, revenue: o.revenue};
+  return entries;
+}, {});
+
+Object.keys(aovPerDay).forEach(date => aovPerDay[date].aov = aovPerDay[date].revenue / aovPerDay[date].count);
+
+Object.keys(aovPerDay).forEach(date => {
+    let previousDays = Object.values(aovPerDay).filter(e => new Date(e.date) < new Date(date));
+    let previousDaysRevenue = previousDays.reduce((sum, e) => sum += e.aov, 0);
+    aovPerDay[date].rolling_average = previousDaysRevenue / previousDays.length || 0;
+});
+
+Object.keys(aovPerDay).reduce((csv, date) => {
+    csv += `${date},${aovPerDay[date].aov},${aovPerDay[date].rolling_average}\n`;
+    return csv;
+}, 'Date,AOV,AOV_AC\n');
+
+```
+
 <h2>Data structure</h2>
 The data generally follows <a href="https://shopify.dev/docs/admin-api/rest/reference">Shopify's definitions</a> for each root type (<code>orders, fulfillments, customers, products, discounts, inventory</code>), with a few notable exceptions:
 
@@ -192,7 +257,7 @@ During very complex queries (nested queries with millions of date comparisons), 
 Yes. Query the type your want to export (eg "orders"), then click the "Send results to file" button. Just be aware that the JSON string will be >10X larger than the compressed data. Orders will export to ~1GB / 100k orders.
 
 <h5>Q. Can I query inventory levels with this?</h5>
-Presently, no. If you would like a more detailed way to analyze inventory data, I suggest looking at your WMS API.
+Yes, to the extent Shopify makes inventory information available. If your goal is to inspect or analyze inventory history, you would need to reconstruct it from fulfillment events or interface with a WMS that tracks history on your behalf.
 
 <h2>Future work</h2>
 Demand pending, I am considering the following feature additions:
