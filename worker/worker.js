@@ -1,6 +1,7 @@
-require('./components/common-class-extensions');
+const path = require('path');
+require(path.join(__dirname, './components/common-class-extensions'));
 const {ipcRenderer} = require('electron');
-const {DataTask} = require('./components/data-task-manager');
+const {DataTask} = require(path.join(__dirname, './components/data-task-manager'));
 let receiveStatusReport = (report) => ipcRenderer.invoke('status', report);
 ipcRenderer.on('reload', () => window.location.reload());
 ipcRenderer.on('deregister-store', async (event, uuid) => {

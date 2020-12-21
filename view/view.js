@@ -1,6 +1,6 @@
-require('../worker/components/common-class-extensions');
-const {ipcRenderer, shell} = require('electron');
 const path = require('path');
+require(path.join(__dirname, '../worker/components/common-class-extensions'));
+const {ipcRenderer, shell} = require('electron');
 ipcRenderer.on('reload', () => window.location.reload());
 let show = (type) => {
     Array.from(document.querySelectorAll('.navigation .tab,.content')).forEach(el => el.classList.remove('active'));
@@ -150,7 +150,7 @@ class Stores {
                     <a href="https://${store.url}/admin" target="_blank">Open store admin</a>
                 </div>
                 <div class="store-right">
-                    <a onclick="shell.openPath(path.resolve('./data'))">View logs</a>
+                    <a onclick="shell.openPath(path.join(app.getPath('userData'), './data'))">View logs</a>
                     <a onclick="app.stores.confirmSync('${store.uuid}')">Force re-sync</a>
                     <a onclick="app.stores.confirmDisconnect('${store.uuid}')">Disconnect store</a>
                 </div>
@@ -178,7 +178,7 @@ class Stores {
 
 class Queries {
     constructor() {
-        let {Database} = require(path.resolve('worker/components/database.js'));
+        let {Database} = require(path.resolve(path.join(__dirname, '../worker/components/database.js')));
         ipcRenderer.invoke('get-stores').then(stores => {
             ipcRenderer.invoke('get-config').then(appconfig => {
                 this.interfaces = stores.map(store => new Database(store, appconfig).queryMode());
@@ -474,6 +474,10 @@ window.app.status = new Status();
 window.app.stores = new Stores();
 window.app.queries = new Queries();
 window.app.settings = new Settings();
+(()=>{
+    let electron = require('electron');
+    app.getPath = electron.remote.app.getPath;
+})();
 ipcRenderer.on('config-update', (ev, c) => {
     Object.assign(window.app.settings, c);
     window.app.queries.interfaces.forEach(i => i.appconfig = c);

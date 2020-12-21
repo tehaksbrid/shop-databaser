@@ -6,6 +6,9 @@
  *
  * Immutable from the front-end.
  */
+const path = require('path');
+const {remote} = require('electron');
+const app = remote.app;
 class Database {
     constructor(store, appconfig, logger) {
         this.store = store;
@@ -263,7 +266,7 @@ class Database {
             },
             "~": (result) => {
                 // Strings only
-                return result[field] && result[field].toString().includes(argument.toString());
+                return result[field] && result[field].toString().toLowerCase().includes(argument.toString().toLowerCase());
             },
             "=": (result) => {
                 let c = coerce(result[field], argument);
@@ -325,10 +328,10 @@ class Database {
      */
 
     _validateDirectories() {
-        if (!this._fs.existsSync('data')) this._fs.mkdirSync('data');
-        if (!this._fs.existsSync('data/files')) this._fs.mkdirSync('data/files');
-        if (!this._fs.existsSync(`data/files/${this.store.name}-${this.store.uuid}`)) this._fs.mkdirSync(`data/files/${this.store.name}-${this.store.uuid}`);
-        if (!this._fs.existsSync('data/indices')) this._fs.mkdirSync('data/indices');
+        if (!this._fs.existsSync(path.join(app.getPath('userData'), `./data`))) this._fs.mkdirSync(path.join(app.getPath('userData'), `./data`));
+        if (!this._fs.existsSync(path.join(app.getPath('userData'), `./data/files`))) this._fs.mkdirSync(path.join(app.getPath('userData'), `./data/files`));
+        if (!this._fs.existsSync(path.join(app.getPath('userData'), `./data/files/${this.store.name}-${this.store.uuid}`))) this._fs.mkdirSync(path.join(app.getPath('userData'), `./data/files/${this.store.name}-${this.store.uuid}`));
+        if (!this._fs.existsSync(path.join(app.getPath('userData'), `./data/indices`))) this._fs.mkdirSync(path.join(app.getPath('userData'), `./data/indices`));
     }
 
     /**
@@ -531,15 +534,15 @@ class Database {
     }
 
     get _dataPath() {
-        return `data/files/${this.store.name}-${this.store.uuid}`;
+        return path.join(app.getPath('userData'), `./data/files/${this.store.name}-${this.store.uuid}`);
     }
 
     _getIndexUrl(type) {
-        return `data/indices/${this.store.name}-${type}-${this.store.uuid}`;
+        return path.join(app.getPath('userData'), `./data/indices/${this.store.name}-${type}-${this.store.uuid}`);
     }
 
     _getDataFileUrl(type, id) {
-        return `data/files/${this.store.name}-${this.store.uuid}/${type}-${id}`;
+        return path.join(app.getPath('userData'), `./data/files/${this.store.name}-${this.store.uuid}/${type}-${id}`);
     }
 
     get datatypes() {

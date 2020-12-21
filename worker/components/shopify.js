@@ -344,7 +344,7 @@ class Shopify {
      */
     async getRecentEvents({from, to}) {
         let path = `/admin/api/2020-10/events.json`;
-        let params = `?limit=250&created_at_min=${from.toShopifyString()}&filter=Order,Product`;
+        let params = `?limit=250&created_at_min=${from.minusMinutes(60).toShopifyString()}&created_at_max=${to.plusMinutes(60).toShopifyString()}&filter=Order,Product`;
         return this._recursiveRead(path, params);
     }
 }

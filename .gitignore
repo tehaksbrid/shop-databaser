@@ -3,3 +3,4 @@ data
 app-config.json
 .idea
 node_modules
+dist

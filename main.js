@@ -1,6 +1,63 @@
-const {Menu, Tray, app, BrowserWindow, ipcMain, shell, dialog} = require('electron');
-const {AppController} = require('./app-controller');
+class AppController {
+    constructor() {
+        this._fs = require('fs');
+        this._uuid = require('uuid');
+        this._axios = require('axios');
+        this.config = this._readConfig();
+        this.stores = this.config.stores;
+    }
+
+    async registerStore({name, key, password, url}) {
+        let shopData = await this._axios(`https://${key}:${password}@${url}/admin/api/2020-10/shop.json`);
+        let plus = shopData.data.shop.plan_name === "shopify_plus";
+
+        let data = arguments[0];
+        data.registered_at = new Date().getTime();
+        data.uuid = this._uuid.v4();
+        data.plus = plus;
+
+        this.stores.push(data);
+        this._writeConfig();
+        return data;
+    }
+
+    deregisterStore(uuid) {
+        this.config.stores = this.config.stores.filter(s => s.uuid !== uuid);
+        this.stores = this.config.stores;
+        this._writeConfig();
+    }
+
+    _writeConfig() {
+        this._fs.writeFileSync(path.join(app.getPath('userData'), `./app-config.json`), JSON.stringify(this.config));
+    }
+
+    _readConfig() {
+        if (this._fs.existsSync(path.join(app.getPath('userData'), `./app-config.json`))) return JSON.parse(this._fs.readFileSync(path.join(app.getPath('userData'), `./app-config.json`), {encoding: 'utf8'}));
+        else return {
+            "general": {
+                "no_data_threshold": 6,
+                "no_data_default_sleep": 5000,
+                "minimum_duration": 2000,
+                "gc_datapile_size": 500,
+                "sync_frequency": 259200000
+            },
+            "logging": {
+                "report_logs_to_console": true,
+                "report_network_logs": false
+            },
+            "queries": {
+                "cache_ttl": 3e5,
+                "use_caching": true,
+                "automatic_result_view": false
+            },
+            "stores": []
+        }
+    }
+}
+
 const path = require('path');
+const {Menu, Tray, app, BrowserWindow, ipcMain, shell, dialog} = require('electron');
+const electron_is_dev = require('electron-is-dev');
 const controller = new AppController();
 
 /**
@@ -12,17 +69,18 @@ app.whenReady().then(() => {
         width: 800,
         height: 600,
         frame: false,
-        icon: path.resolve('./icon.png'),
+        icon: path.join(__dirname, './icon.png'),
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true
         }
     })
-    view.webContents.openDevTools();
+    if (electron_is_dev) view.webContents.openDevTools();
     view.webContents.on('new-window', (e, url) => {
         e.preventDefault();
         shell.openExternal(url);
     });
-    view.loadFile('view/view.html');
+    view.loadFile(path.join(__dirname, './view/view.html'));
 
     view.on('minimize', function (event) {
         event.preventDefault();
@@ -37,7 +95,7 @@ app.whenReady().then(() => {
         return false;
     });
 
-    tray = new Tray(path.resolve('./icon.png'));
+    tray = new Tray(path.join(__dirname, './icon.png'));
     let contextMenu = Menu.buildFromTemplate([
         {
             label: 'Close application', click: () => {
@@ -59,10 +117,13 @@ app.whenReady().then(() => {
 
     worker = new BrowserWindow({
         show: false,
-        webPreferences: {nodeIntegration: true}
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true
+        }
     });
-    worker.webContents.openDevTools();
-    worker.loadFile('worker/worker.html');
+    if (electron_is_dev) worker.webContents.openDevTools();
+    worker.loadFile(path.join(__dirname, 'worker/worker.html'));
 });
 
 app.on('window-all-closed', () => {
@@ -85,7 +146,7 @@ ipcMain.handle('new-terminal', async () => {
         frame: false,
         webPreferences: {nodeIntegration: true}
     });
-    await consoleParent.loadFile('./view/modals/result-viewer.html');
+    await consoleParent.loadFile(path.join(__dirname, `./view/modals/result-viewer.html`));
     await new Promise(r => {
         consoleParent.once('ready-to-show', () => {
             consoleParent.webContents.openDevTools({mode: 'detach'});
@@ -113,7 +174,7 @@ ipcMain.handle('save-json', () => {
             width: 400,
             height: 150,
             parent: view,
-            content: './view/modals/save-json.html',
+            content: path.join(__dirname, './view/modals/save-json.html'),
             data: {
                 path: result
             }
@@ -133,7 +194,7 @@ ipcMain.handle('add-store', () => {
         width: 400,
         height: 300,
         parent: view,
-        content: './view/modals/add-store.html',
+        content: path.join(__dirname, './view/modals/add-store.html'),
     }).then(store => {
         if (store) {
             controller.registerStore(store).then(r => {
@@ -151,7 +212,7 @@ ipcMain.handle('confirm-disconnect-store', (event, store) => {
         width: 400,
         height: 160,
         parent: view,
-        content: './view/modals/confirm-disconnect.html',
+        content: path.join(__dirname, './view/modals/confirm-disconnect.html'),
         data: {
             name: store.name,
             disk_usage: store.disk_usage
@@ -172,7 +233,7 @@ ipcMain.handle('confirm-resync-store', (event, store) => {
         width: 400,
         height: 160,
         parent: view,
-        content: './view/modals/confirm-resync.html',
+        content: path.join(__dirname, './view/modals/confirm-resync.html'),
         data: {
             name: store.name
         }
@@ -226,7 +287,7 @@ class ModalProvider {
             frame: false,
             webPreferences: {nodeIntegration: true}
         });
-        modal.loadFile('./view/modal-template.html');
+        modal.loadFile(path.join(__dirname, './view/modal-template.html'));
         modal.once('ready-to-show', () => {
             modal.webContents.send('modal-load-data', data);
             modal.webContents.send('modal-load-contents', content);

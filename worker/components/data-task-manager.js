@@ -8,13 +8,16 @@
 
 
 // TODO -- quit during database validation may corrupt database
+const path = require('path');
+const {remote} = require('electron');
+const app = remote.app;
 
 class DataTaskManager {
     constructor(store, appconfig, statusCb) {
         this.appconfig = appconfig;
         this._fs = require('fs');
-        let {Shopify} = require('./shopify');
-        let {Database} = require('./database');
+        let {Shopify} = require(path.join(__dirname, './shopify'));
+        let {Database} = require(path.join(__dirname, './database'));
         this.shopify = new Shopify(store, appconfig, this._log);
         this.db = new Database(store, appconfig, this._log);
         this.store = store;
@@ -141,7 +144,9 @@ class DataTaskManager {
 
         // Obtains order data
         this.queue = [];
-        let recentEvents = await this.shopify.getRecentEvents(this._getRecentDateRange());
+        let recentDateRange = this._getRecentDateRange();
+        this._metadata.recent_read_cursor = recentDateRange.to.getTime();
+        let recentEvents = await this.shopify.getRecentEvents(recentDateRange);
         let orderTasks = this.generateOrderTasks(recentEvents);
         let customerTasks = this.generateCustomerTasks(recentEvents);
         let productTasks = this.generateProductTasks(recentEvents);
@@ -404,7 +409,6 @@ class DataTaskManager {
      *  Records to disk information about read/write state
      */
     _writeMetadata() {
-        this._metadata.recent_read_cursor = this._getRecentDateRange().to;
         this._fs.writeFileSync(this._getMetadataUrl(), JSON.stringify(this._metadata));
     }
 
@@ -418,7 +422,7 @@ class DataTaskManager {
     }
 
     _getMetadataUrl() {
-        return `data/files/${this.store.name}-task-metadata-${this.store.uuid}.json`;
+        return path.join(app.getPath('userData'), `./data/files/${this.store.name}-task-metadata-${this.store.uuid}.json`);
     }
 
     /**
@@ -435,14 +439,14 @@ class DataTaskManager {
     }
 
     _getLogFileUrl() {
-        return `data/log-${this.store.name}-${this.store.uuid}.txt`;
+        return path.join(app.getPath('userData'), `./data/log-${this.store.name}-${this.store.uuid}.txt`);
     }
 
     _log(message) {
-        let logFileUrl = `data/log-${this.store.name}-${this.store.uuid}.txt`;
+        let logFileUrl = path.join(app.getPath('userData'), `./data/log-${this.store.name}-${this.store.uuid}.txt`);
         if (this.appconfig.logging.report_logs_to_console) console.log(message);
-        if (!this._fs.existsSync('data')) {
-            this._fs.mkdirSync('data');
+        if (!this._fs.existsSync(path.join(app.getPath('userData'), `./data`))) {
+            this._fs.mkdirSync(path.join(app.getPath('userData'), `./data`));
         }
         if (!this._fs.existsSync(logFileUrl)) {
             this._fs.writeFileSync(logFileUrl, `${message}\n`);

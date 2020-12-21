@@ -89,7 +89,7 @@ a {
 
 .navigation .close svg:hover {
     cursor: pointer;
-    background-color: var(--element-primary);
+    background-color: orangered;
 }
 
 .content {
