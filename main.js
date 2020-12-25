@@ -39,7 +39,7 @@ class AppController {
                 "no_data_default_sleep": 5000,
                 "minimum_duration": 2000,
                 "gc_datapile_size": 500,
-                "sync_frequency": 259200000
+                "sync_frequency": 8.64e8
             },
             "logging": {
                 "report_logs_to_console": true,
