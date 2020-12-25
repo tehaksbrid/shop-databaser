@@ -51,14 +51,11 @@ root_type [ field = value ] [ ... ] : subtype1 [ field = value ] [ ... ] : subty
 
 - `root_type` must always be one of `orders, fulfillments, customers, products, discounts, inventory`
 
-<h4>Subtypes</h4>
-
-- Subtypes have a number of access quantifiers
-  - `:` Existential some<br/>`orders : line_items [ sku = ABC ]` &rarr; Orders where <b>some</b> line item has SKU ABC
-  - `&` Existential every<br/>`orders & line_items [ sku = ABC ]` &rarr; Orders where <b>every</b> line item has SKU ABC
-  - `*` None<br/>`orders * line_items [ sku = ABC ]` &rarr; Orders where <b>no</b> line item has SKU ABC
-  
 <h4>Fields and values</h4>
+
+<b>Example</b>. `orders [ name = #1001 ]`
+
+Returns orders whose name <em>field</em> is equal to the <em>value</em> "#1001".
 
 - Fields have a number of comparison functions
   - `=` Downcased string/number equality<br/> `customers [ first_name = zach ]` &rarr; Customers whose first name <b>equals</b> "zach" (or "Zach")
@@ -71,6 +68,21 @@ root_type [ field = value ] [ ... ] : subtype1 [ field = value ] [ ... ] : subty
 - You can execute serial field comparisons
   - `fulfillments : events [ status = delivered ] [ happenedAt > 1-1-20 ]` &rarr; Fulfillments that were marked as delivered after January 1st 2020
 
+<h4>Subtypes</h4>
+
+<b>Example</b>. `orders : shipping_address [ country_code = US ]`
+
+Returns orders where the following conditions are met:
+ - The order has a field called "shipping_address"
+ - "shipping_address" has a field called "country_code", whose value is "US"
+
+Subtypes can be objects or arrays.
+
+- Subtypes have a number of access quantifiers
+  - `:` Existential some<br/>`orders : line_items [ sku = ABC ]` &rarr; Orders where <b>some</b> line item has SKU ABC
+  - `&` Existential every<br/>`orders & line_items [ sku = ABC ]` &rarr; Orders where <b>every</b> line item has SKU ABC
+  - `*` None<br/>`orders * line_items [ sku = ABC ]` &rarr; Orders where <b>no</b> line item has SKU ABC
+
 <h4>Misc</h4>
 
 <ul>
@@ -81,12 +93,12 @@ root_type [ field = value ] [ ... ] : subtype1 [ field = value ] [ ... ] : subty
 orders : line_items : properties [ name = engraving ]
 orders [ created_at > 1-1-20 ]
 ```
-This filters for <b>orders</b> placed after January 1st 2020 with some line items that have some line item property named "engraving".<br/>
+This finds orders where some line items have a property with name=engraving, then filters that result for order creation after January 1st 2020<br/>
 </li></ul>
 </li>
 </ul>
 
-- SD will join different data sets if it can determine a relationship between them. In the current release, those are:
+- SD will join different data sets if it can determine a relationship between them. The joined result is always an array. Those relationships are:
   - `orders: fulfillments`, `orders: customers`
   - `fulfillments: orders`
   - `line_items: products`
@@ -218,6 +230,9 @@ The data generally follows <a href="https://shopify.dev/docs/admin-api/rest/refe
 The fastest way to explore each data structure is to simply query the type and send the results to a javascript console.
 
 <h2>FAQs</h2>
+<h5>Q. Is MacOS supported</h5>
+No. During development, I did not have Apple hardware to test and build on. I do have a new Mac on the way, so I'll be doing a dmg release in mid-January.
+
 <h5>Q. Is this an "open source" project?</h5>
 <b>No.</b> The source code is <em>public</em>, as I would never ask store owners to put such powerful Shopify access tokens into an application whose security they could not personally validate. While I hope this project can help you enhance the profits of your store, I retain the rights to sell or monetize the code itself.
 
@@ -225,13 +240,13 @@ The fastest way to explore each data structure is to simply query the type and s
 Private tokens give their bearer access to the entire history of your store. App tokens can only access the past 60 days worth of data. I chose private tokens to make SD more powerful.
 
 <h5>Q. Does SD collect usage data?</h5>
-At this time, <b>no</b>. I have interest in sampling specific datasets in the future to support some AI projects. If this happens, it will be an explicit opt-in.
+At this time, <b>no</b>. I have interest in sampling specific datasets in the future to support some AI projects. If this happens, it will be an explicit opt-in. The only network requests the current version makes are to your store, to gather data on your behalf.
 
 <h5>Q. Can you add...</h5>
 I will absolutely consider it and discuss the request. Please submit a feature request via the <a href="//github.com/tehaksbrid/shop-databaser/issues">Issues</a> tab.
 
 <h5>Q. Is SD self-updating?</h5>
-At present, no. Beta version 1 does not check for updates.
+Beta version 1 does not self-update.
 
 <h5>Q. This query language is dumb</h5>
 Yup sure is, that's why I added the "Send to console" / "Send to file" buttons.
@@ -264,9 +279,9 @@ Demand pending, I am considering the following feature additions:
 
  - Finer store permissions. For example, excluding the `customers` permission would cause SD to not attempt downloading that data.
  - A server-friendly version
- - More robust parent/child relationships. Would be nice to be able to link children to grandparents (eg line_item &rarr; variant
+ - More robust parent/child relationships. Would be nice to be able to link children to grandparents (eg line_item &rarr; variant)
  
 
 <h2>Disclaimer</h2>
-This is application is a novelty not intended to support production software workloads and is not guaranteed to be reliable or accurate. See licensing.
+This is application is a novelty not intended to support production software workloads and is not guaranteed to be reliable, accurate, or safe. See licensing.
 
