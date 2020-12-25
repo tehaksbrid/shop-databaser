@@ -31,7 +31,7 @@ I can't imagine I'm the only person frustrated by this, so I have written SD in 
 
 <h2>Setup</h2>
 <ol>
-<li>Download and install <a href="//github.com/tehaksbrid/shop-databaser/release">the latest release of SD</a></li>
+<li>Download and install <a href="//github.com/tehaksbrid/shop-databaser/releases">the latest release of SD</a></li>
 <li>Create a <b>private app token</b> (your-store.myshopify.com/admin/apps/private) with <b>read access</b> on the following permissions:
 <ul>
 <li>Customers, discounts, inventory, orders, price rules, and products</li>
