@@ -351,8 +351,10 @@ class Database {
                     JSON.parse(dataString);
                     break;
                 } catch (err) {
+                    this._log(`Index access failure. Stack trace: \n ${err.stack}`);
                     indexAccessFailureCount++;
                     if (indexAccessFailureCount === 3) {
+                        this._log(`Catastrophic index access failure! Index will be deleted. Stack trace:\n ${err.stack}`);
                         await this._writeIndex(type, {});
                         indicesWerePurged = true;
                     }

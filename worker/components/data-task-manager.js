@@ -7,7 +7,6 @@
  */
 
 
-// TODO -- quit during database validation may corrupt database
 const path = require('path');
 const {remote} = require('electron');
 const app = remote.app;
