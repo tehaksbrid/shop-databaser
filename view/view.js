@@ -7,6 +7,18 @@ let show = (type) => {
     Array.from(document.querySelectorAll(`.tab.${type},.content.${type}`)).forEach(el => el.classList.add('active'));
 };
 
+window.addEventListener('keydown', (ev) => {
+    if (ev.key === "1" && ev.ctrlKey === true) show("status");
+    else if (ev.key === "2" && ev.ctrlKey === true) show("stores");
+    else if (ev.key === "3" && ev.ctrlKey === true) show("queries");
+    else if (ev.key === "4" && ev.ctrlKey === true) show("settings");
+    else if (ev.key === "Tab") {
+        ev.preventDefault();
+        show("queries");
+        document.querySelector("textarea").focus();
+    }
+});
+
 class Status {
     constructor() {
         this.updateCallbacks = [];
