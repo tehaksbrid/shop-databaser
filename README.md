@@ -234,7 +234,7 @@ The fastest way to explore each data structure is to simply query the type and s
 No. During development, I did not have Apple hardware to test and build on. I do have a new Mac on the way, so I'll be doing a dmg release in mid-January.
 
 <h5>Q. Is this an "open source" project?</h5>
-<b>No.</b> The source code is <em>public</em>, as I would never ask store owners to put such powerful Shopify access tokens into an application whose security they could not personally validate. While I hope this project can help you enhance the profits of your store, I retain the rights to sell or monetize the code itself.
+<b>No.</b> This project is <em>public-source freeware</em>. The source code is public and the releases are code-signed so that users can ease potential security concerns. I, personally, would not enter powerful Shopify tokens into an application whose source I could not inspect. While I hope this project can help you enhance the profits of your store, I retain the rights to sell or monetize the project/code itself.
 
 <h5>Q. Why does this use private tokens?</h5>
 Private tokens give their bearer access to the entire history of your store. App tokens can only access the past 60 days worth of data. I chose private tokens to make SD more powerful.
