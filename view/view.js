@@ -209,8 +209,11 @@ class Queries {
                 ev.currentTarget.style.height = "18px";
                 ev.currentTarget.style.height = `${ev.currentTarget.scrollHeight}px`;
                 // Format query input to look nicer
-                ev.currentTarget.value = ev.currentTarget.value.replace(/(\w)([:\[\]=~><&!])$/g, '$1 $2 ');
-                ev.currentTarget.value = ev.currentTarget.value.replace(/([><])\s(=)/g, '$1$2 ');
+                if (app.settings.queries.pretty_print) {
+                    ev.currentTarget.value = ev.currentTarget.value.replace(/([\:\[\]=~><&!\w])([\:\[\]=~><&!])$/g, '$1 $2 ');
+                    ev.currentTarget.value = ev.currentTarget.value.replace(/([\:\[\]=~><&!])(\w)/g, '$1 $2');
+                    ev.currentTarget.value = ev.currentTarget.value.replace(/([><])\s(=)/g, '$1$2 ');
+                }
             });
             document.querySelector('.query-container > textarea').addEventListener('keydown', (ev) => {
                 if (ev.code === "Enter" && !ev.shiftKey && !ev.ctrlKey) {
@@ -458,6 +461,17 @@ class Settings {
                     ipcRenderer.invoke('update-config', {
                         type: 'queries',
                         key: 'automatic_result_view',
+                        value: JSON.parse(ev.currentTarget.checked)
+                    });
+                }
+            });
+
+            this.getInput('pretty_print').checked = appconfig.queries.pretty_print;
+            this.getInput('pretty_print').addEventListener('change', (ev) => {
+                if (ev.currentTarget.value !== app.settings.queries.pretty_print) {
+                    ipcRenderer.invoke('update-config', {
+                        type: 'queries',
+                        key: 'pretty_print',
                         value: JSON.parse(ev.currentTarget.checked)
                     });
                 }
