@@ -31,12 +31,19 @@ I can't imagine I'm the only person frustrated by this, so I have written SD in 
 
 <h2>Table of Contents</h2>
 1. <a href="#quick-start-guide">Quick start guide</a>
+
 2. <a href="#example-queries">Example queries</a>
+
 3. <a href="#query-syntax-and-features">Query syntax and features</a>
+
 4. <a href="#example-analysis">Example analysis</a>
+
 5. <a href="#data-structure">Data structure</a>
+
 6. <a href="#faqs">FAQs</a>
+
 7. <a href="#future-work">Future work</a>
+
 8. <a href="#disclaimer">Disclaimer</a>
 
 <h2>Quick start guide</h2>
