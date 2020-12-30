@@ -20,8 +20,8 @@ I have spent the last few years working with a number of very large Shopify stor
 <ul>
 <li>What fulfillments contained item X today?</li>
 <li>How has AOV changed over the history of the store?</li>
-<li>What was AOV in orders placed after the customer used discount Y in a previous order?</li>
-<li>How does actual delivery time for carrier/method A compared to carrier/method B?</li>
+<li>How has our refund rate changed in the last 30 days?</li>
+<li>What are the actual delivery times for Fedex/2day?</li>
 </ul>
 
 The analysis involved in these queries is very simple, but just <b>collecting</b> the data accounted for 90% of the time cost. I would have to write some code to read the right data from Shopify, and usually end up throwing everything away when I was done.
@@ -29,7 +29,17 @@ The analysis involved in these queries is very simple, but just <b>collecting</b
 
 I can't imagine I'm the only person frustrated by this, so I have written SD in an attempt to solve this problem as generally as possible.
 
-<h2>Setup</h2>
+<h2>Table of Contents</h2>
+1. <a href="#quick-start-guide">Quick start guide</a>
+2. <a href="#example-queries">Example queries</a>
+3. <a href="#query-syntax-and-features">Query syntax and features</a>
+4. <a href="#example-analysis">Example analysis</a>
+5. <a href="#data-structure">Data structure</a>
+6. <a href="#faqs">FAQs</a>
+7. <a href="#future-work">Future work</a>
+8. <a href="#disclaimer">Disclaimer</a>
+
+<h2>Quick start guide</h2>
 <ol>
 <li>Download and install <a href="//github.com/tehaksbrid/shop-databaser/releases">the latest release of SD</a></li>
 <li>Create a <b>private app token</b> (your-store.myshopify.com/admin/apps/private) with <b>read access</b> on the following permissions:
@@ -41,8 +51,60 @@ I can't imagine I'm the only person frustrated by this, so I have written SD in 
 <li>Click "Connect". SD will validate the connection & permissions, then save the info. It will immediately begin copying all store data.</li>
 </ol>
 
+Once running on your machine, press <b>tab</b> or <b>CTRL+3</b> to bring up queries. Queries work by taking a list of your Shopify data types (orders, fulfillments, etc) and filtering them based on input you provide. For example, inputting `orders : shipping_address [ country_code = US ]` will return every order in the database where `order.shipping_address.country_code` is equal to "US".
 
-<h2>Guide to queries</h2>
+<h2>Example queries</h2>
+
+<h5>Customers that had an order delivered on or after January 1st 2020</h5>
+
+```
+customers : orders : fulfillments : events [ status = delivered ] [ happenedAt > 1-1-20 ]
+```
+
+<h5>Free orders</h5>
+
+```
+orders [ subtotal_price = 0 ]
+```
+
+<h5>Unpaid orders that have fulfillments</h5>
+
+```
+orders [ financial_status = pending ]
+orders : fulfillments
+```
+
+<h5>Orders where a specific item was refunded</h5>
+
+```
+orders :  refunds : refund_line_items : line_item [ sku = ABC ]
+```
+
+<h5>Orders with refunds that were created on or after January 1st 2020</h5>
+
+```
+orders : refunds [ created_at > 1-1-20 ]
+```
+
+<h5>Products with an image exceeding 1MP</h5>
+
+```
+products : images [ height > 1000 ] [ width > 1000 ]
+```
+
+<h5>Products with no HTS code</h5>
+
+```
+products : variants : inventory [ harmonized_system_code = null ]
+```
+
+<h5>Customers who have used a specific discount code</h5>
+
+```
+customers : orders : discount_codes [ code = ABC ]
+```
+
+<h2>Query syntax and features</h2>
 This query language is inspired by xpath and has the following general structure
 
 ```
@@ -104,60 +166,9 @@ This finds orders where some line items have a property with name=engraving, the
   - `line_items: products`
   - `customers : orders`
   - `variants: inventory`
-  
 
-<h2>Example queries</h2>
 
-<h5>Customers that had an order delivered on or after January 1st 2020</h5>
-
-```
-customers : orders : fulfillments : events [ status = delivered ] [ happenedAt > 1-1-20 ]
-```
-
-<h5>Free orders</h5>
-
-```
-orders [ subtotal_price = 0 ]
-```
-
-<h5>Unpaid orders that have fulfillments</h5>
-
-```
-orders [ financial_status = pending ]
-orders : fulfillments
-```
-
-<h5>Orders where a specific item was refunded</h5>
-
-```
-orders :  refunds : refund_line_items : line_item [ sku = ABC ]
-```
-
-<h5>Orders with refunds that were created on or after January 1st 2020</h5>
-
-```
-orders : refunds [ created_at > 1-1-20 ]
-```
-
-<h5>Products with an image exceeding 1MP</h5>
-
-```
-products : images [ height > 1000 ] [ width > 1000 ]
-```
-
-<h5>Products with no HTS code</h5>
-
-```
-products : variants : inventory [ harmonized_system_code = null ]
-```
-
-<h5>Customers who have used a specific discount code</h5>
-
-```
-customers : orders : discount_codes [ code = ABC ]
-```
-
-<h2>Example analyses</h2>
+<h2>Example analysis</h2>
 <h5>Plottable delivery times of all fulfillments</h5>
 
 ```
