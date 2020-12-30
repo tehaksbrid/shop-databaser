@@ -30,21 +30,16 @@ The analysis involved in these queries is very simple, but just <b>collecting</b
 I can't imagine I'm the only person frustrated by this, so I have written SD in an attempt to solve this problem as generally as possible.
 
 <h2>Table of Contents</h2>
-1. <a href="#quick-start-guide">Quick start guide</a>
-
-2. <a href="#example-queries">Example queries</a>
-
-3. <a href="#query-syntax-and-features">Query syntax and features</a>
-
-4. <a href="#example-analysis">Example analysis</a>
-
-5. <a href="#data-structure">Data structure</a>
-
-6. <a href="#faqs">FAQs</a>
-
-7. <a href="#future-work">Future work</a>
-
-8. <a href="#disclaimer">Disclaimer</a>
+<ol>
+  <li><a href="#quick-start-guide">Quick start guide</a></li>
+  <li><a href="#example-queries">Example queries</a></li>
+  <li><a href="#query-syntax-and-features">Query syntax and features</a></li>
+  <li><a href="#example-analysis">Example analysis</a></li>
+  <li><a href="#data-structure">Data structure</a></li>
+  <li><a href="#faqs">FAQs</a></li>
+  <li><a href="#future-work">Future work</a></li>
+  <li><a href="#disclaimer">Disclaimer</a></li>
+</ol>
 
 <h2>Quick start guide</h2>
 <ol>
