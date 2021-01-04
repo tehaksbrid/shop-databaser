@@ -20,7 +20,7 @@ I have spent the last few years working with a number of very large Shopify stor
 <ul>
 <li>What fulfillments contained item X today?</li>
 <li>How has AOV changed over the history of the store?</li>
-<li>How has our refund rate changed in the last 30 days?</li>
+<li>What is our overall refund rate?</li>
 <li>What are the actual delivery times for Fedex/2day?</li>
 </ul>
 
@@ -171,6 +171,83 @@ This finds orders where some line items have a property with name=engraving, the
 
 
 <h2>Example analysis</h2>
+<h5>What fulfillments contained item X today?</h5>
+
+```
+
+fulfillments [ created_at > 1-1-21 ]
+fulfillments : line_items [ sku = X ]
+
+```
+
+<h5>How has AOV changed over the history of the store?</h5>
+
+```
+orders
+
+(Send results to console)
+
+let aovSet = results.map(o => { // Reducing each order to its relevant data: revenue & date
+  return {
+    revenue: +o.subtotal_price,
+    date: new Date(o.created_at).toLocaleDateString('en-US')
+  }
+});
+
+let aovPerDay = aovSet.reduce((entries, o) => { // Total revenue on each date
+  entries[o.date] = entries[o.date] ? {...o, count: entries[o.date].count + 1, revenue: entries[o.date].revenue + o.revenue} : {...o, count: 1, revenue: o.revenue};
+  return entries;
+}, {});
+
+// Calculating average revenue on each date
+Object.keys(aovPerDay).forEach(date => aovPerDay[date].aov = aovPerDay[date].revenue / aovPerDay[date].count);
+
+// For each date, calculate average revenue for all days prior
+Object.keys(aovPerDay).forEach(date => {
+    let previousDays = Object.values(aovPerDay).filter(e => new Date(e.date) < new Date(date));
+    let previousDaysRevenue = previousDays.reduce((sum, e) => sum += e.aov, 0);
+    aovPerDay[date].rolling_average = previousDaysRevenue / previousDays.length || 0;
+});
+
+// Output as CSV
+Object.keys(aovPerDay).reduce((csv, date) => {
+    csv += `${date},${aovPerDay[date].aov},${aovPerDay[date].rolling_average}\n`;
+    return csv;
+}, 'Date,AOV,AOV_AC\n');
+
+```
+
+<h5>What is our overall refund rate?</h5>
+
+```
+orders
+
+(Send results to console)
+
+// (# orders with > 0 refunds) / (# orders)
+let frequency = results.filter(o => o.refunds.length > 0).length / results.length;
+`1 in ${Math.round(1/frequency)} orders have had a refund of any kind`;
+```
+
+<h5>What are the actual delivery times for Fedex/2day?</h5>
+
+```
+fulfillments [ tracking_company = fedex ]
+fulfillments : events [ status = delivered ]
+fulfillments : orders : shipping_lines [ code ~ 2day ]
+// The shipping line code is store-dependent!
+
+(Send results to console)
+
+let total = results.reduce((total_delivery_time, f) => {
+  return total_delivery_time + (new Date(f.events.find(e => e.status === "DELIVERED").happenedAt).getTime() - new Date(f.created_at)).getTime();
+}, 0);
+
+// Average days per shipment from fulfillment creation to "delivered" event
+total / 8.64e7 / results.length;
+
+```
+
 <h5>Plottable delivery times of all fulfillments</h5>
 
 ```
@@ -197,40 +274,6 @@ results.map(o => {
   entries[o.date] = entries[o.date] ? entries[o.date] + o.quantity : o.quantity;
   return entries;
 }, {});
-```
-
-<h5>AOV time series with full autocorrelation</h5>
-
-```
-orders [ subtotal_price > 0 ]
-
-(Send results to console)
-
-let aovSet = results.map(o => {
-  return {
-    revenue: +o.subtotal_price,
-    date: new Date(o.created_at).toLocaleDateString('en-US')
-  }
-});
-
-let aovPerDay = aovSet.reduce((entries, o) => {
-  entries[o.date] = entries[o.date] ? {...o, count: entries[o.date].count + 1, revenue: entries[o.date].revenue + o.revenue} : {...o, count: 1, revenue: o.revenue};
-  return entries;
-}, {});
-
-Object.keys(aovPerDay).forEach(date => aovPerDay[date].aov = aovPerDay[date].revenue / aovPerDay[date].count);
-
-Object.keys(aovPerDay).forEach(date => {
-    let previousDays = Object.values(aovPerDay).filter(e => new Date(e.date) < new Date(date));
-    let previousDaysRevenue = previousDays.reduce((sum, e) => sum += e.aov, 0);
-    aovPerDay[date].rolling_average = previousDaysRevenue / previousDays.length || 0;
-});
-
-Object.keys(aovPerDay).reduce((csv, date) => {
-    csv += `${date},${aovPerDay[date].aov},${aovPerDay[date].rolling_average}\n`;
-    return csv;
-}, 'Date,AOV,AOV_AC\n');
-
 ```
 
 <h2>Data structure</h2>
@@ -292,6 +335,7 @@ Demand pending, I am considering the following feature additions:
 
  - Finer store permissions. For example, excluding the `customers` permission would cause SD to not attempt downloading that data.
  - A server-friendly version
+ - Saving and replaying queries
  - More robust parent/child relationships. Would be nice to be able to link children to grandparents (eg line_item &rarr; variant)
  
 
