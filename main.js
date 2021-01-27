@@ -95,7 +95,7 @@ app.whenReady().then(() => {
         return false;
     });
 
-    tray = new Tray(path.join(__dirname, './icon.png'));
+    tray = new Tray(path.join(__dirname, './icon32@2x.png'));
     let contextMenu = Menu.buildFromTemplate([
         {
             label: 'Close application', click: () => {
