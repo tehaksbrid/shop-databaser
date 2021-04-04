@@ -69,7 +69,7 @@ app.whenReady().then(() => {
         width: 800,
         height: 600,
         frame: false,
-        icon: path.join(__dirname, './icon.png'),
+        icon: path.join(__dirname, './view/assets/icons/icon.png'),
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true
@@ -95,7 +95,7 @@ app.whenReady().then(() => {
         return false;
     });
 
-    tray = new Tray(path.join(__dirname, './icon32@2x.png'));
+    tray = new Tray(path.join(__dirname, './view/assets/icons/icon32@2x.png'));
     let contextMenu = Menu.buildFromTemplate([
         {
             label: 'Close application', click: () => {
