@@ -59,7 +59,8 @@ const path = require('path');
 const {Menu, Tray, app, BrowserWindow, ipcMain, shell, dialog} = require('electron');
 const electron_is_dev = require('electron-is-dev');
 const controller = new AppController();
-
+const singleInstanceLock = app.requestSingleInstanceLock();
+if (!singleInstanceLock) return app.quit();
 /**
  * Setup and open windows
  */
@@ -95,7 +96,13 @@ app.whenReady().then(() => {
         return false;
     });
 
-    tray = new Tray(path.join(__dirname, './view/assets/icons/icon32@2x.png'));
+
+    app.on('second-instance', () => {
+        view.show();
+        view.focus();
+    });
+
+    tray = new Tray(path.join(__dirname, process.platform === "darwin" ? './view/assets/icons/icon32@2x.png' : './view/assets/icons/icon.png'));
     let contextMenu = Menu.buildFromTemplate([
         {
             label: 'Close application', click: () => {
