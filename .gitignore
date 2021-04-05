@@ -1,6 +1,7 @@
 backup
 data
 app-config.json
+.DS_STORE
 .idea
 node_modules
 dist

@@ -1,6 +1,6 @@
 {
   "name": "shop-databaser",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Shop Databaser",
   "main": "main.js",
   "scripts": {
@@ -17,14 +17,22 @@
   ],
   "build": {
     "productName": "Shop Databaser",
+    "afterSign": "./build/notarize.js",
     "win": {
       "target": "NSIS",
-      "icon": "./icon.ico"
+      "icon": "./build/icon.ico"
+    },
+    "mac": {
+      "icon": "./build/icon.icns",
+      "hardenedRuntime": true,
+      "entitlements": "./build/entitlements.mac.inherit.plist",
+      "target": ["dmg", "zip"]
     }
   },
   "devDependencies": {
     "electron": "^10.1.5",
-    "electron-builder": "^22.9.1"
+    "electron-builder": "^22.9.1",
+    "electron-notarize": "^1.0.0"
   },
   "dependencies": {
     "axios": "^0.18.1",

@@ -59,7 +59,8 @@ const path = require('path');
 const {Menu, Tray, app, BrowserWindow, ipcMain, shell, dialog} = require('electron');
 const electron_is_dev = require('electron-is-dev');
 const controller = new AppController();
-
+const singleInstanceLock = app.requestSingleInstanceLock();
+if (!singleInstanceLock) return app.quit();
 /**
  * Setup and open windows
  */
@@ -69,7 +70,7 @@ app.whenReady().then(() => {
         width: 800,
         height: 600,
         frame: false,
-        icon: path.join(__dirname, './icon.png'),
+        icon: path.join(__dirname, './view/assets/icons/icon.png'),
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true
@@ -95,7 +96,7 @@ app.whenReady().then(() => {
         return false;
     });
 
-    tray = new Tray(path.join(__dirname, './icon.png'));
+    tray = new Tray(path.join(__dirname, process.platform === "darwin" ? './view/assets/icons/icon32@2x.png' : './view/assets/icons/icon.png'));
     let contextMenu = Menu.buildFromTemplate([
         {
             label: 'Close application', click: () => {
@@ -127,10 +128,19 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin' || trueQuit === true) {
+    if (trueQuit === true) {
         app.quit()
     }
-})
+});
+
+app.on('second-instance', () => {
+    view.show();
+    view.focus();
+});
+
+app.on('activate', (ev, hasWindow) => {
+    if (!hasWindow) view.show();
+});
 
 /**
  * IPCs
