@@ -96,12 +96,6 @@ app.whenReady().then(() => {
         return false;
     });
 
-
-    app.on('second-instance', () => {
-        view.show();
-        view.focus();
-    });
-
     tray = new Tray(path.join(__dirname, process.platform === "darwin" ? './view/assets/icons/icon32@2x.png' : './view/assets/icons/icon.png'));
     let contextMenu = Menu.buildFromTemplate([
         {
@@ -137,7 +131,16 @@ app.on('window-all-closed', () => {
     if (trueQuit === true) {
         app.quit()
     }
-})
+});
+
+app.on('second-instance', () => {
+    view.show();
+    view.focus();
+});
+
+app.on('activate', (ev, hasWindow) => {
+    if (!hasWindow) view.show();
+});
 
 /**
  * IPCs
