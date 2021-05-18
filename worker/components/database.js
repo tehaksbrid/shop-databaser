@@ -515,7 +515,7 @@ class Database {
     async _decompress(buffer) {
         return new Promise((resolve, reject) => {
             this._zlib.gunzip(buffer, null, (err, data) => {
-                if (err) reject();
+                if (err) reject(err);
                 else resolve(data.toString('utf8'));
             });
         });
